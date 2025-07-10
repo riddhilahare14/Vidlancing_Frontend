@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../utils/axios"; // Adjust path as needed
 import {
   Clock,
@@ -24,10 +24,12 @@ import {
 export default function GigDescriptionPage() {
   const { gigId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [gig, setGig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedPackage, setSelectedPackage] = useState("basic");
+  const [selectedPackage, setSelectedPackage] = useState("Basic");
 
   useEffect(() => {
     const fetchGig = async () => {
@@ -86,19 +88,21 @@ export default function GigDescriptionPage() {
           },
           packages: Array.isArray(gigData.pricing)
             ? gigData.pricing.map((pkg) => ({
-                type: pkg.type || "basic",
+                type: pkg.name || "Basic",
                 name: pkg.name || "Unnamed Package",
                 price: pkg.price || 0,
-                delivery: pkg.delivery || "Not specified",
+                description: pkg.description || gigData.description,
+                delivery: pkg.deliveryTime || "Not specified",
                 revisions: pkg.revisions || 0,
                 duration: pkg.duration || "Not specified",
                 features: pkg.features || [],
               }))
             : [
                 {
-                  type: "basic",
+                  type: "Basic",
                   name: "Default Package",
                   price: 0,
+                  description: "",
                   delivery: "Not specified",
                   revisions: 0,
                   duration: "Not specified",
@@ -571,7 +575,7 @@ export default function GigDescriptionPage() {
                           selectedPackage === pkg.type ? "text-purple-700" : "text-gray-500 hover:text-gray-700"
                         }
                       >
-                        {pkg.type.charAt(0).toUpperCase() + pkg.type.slice(1)}
+                        {pkg.name}
                       </span>
                       <div className="text-sm text-gray-500">${pkg.price}</div>
                     </button>
@@ -589,7 +593,7 @@ export default function GigDescriptionPage() {
                         </div>
                       </div>
 
-                      <p className="text-gray-600 mb-5 border-b border-gray-100 pb-5">{gig.description}</p>
+                      <p className="text-gray-600 mb-5 border-b border-gray-100 pb-5">{pkg.description}</p>
 
                       <div className="grid grid-cols-2 gap-3 mb-5">
                         <div className="flex items-center gap-2 bg-purple-50 p-2.5 rounded-xl">
@@ -600,7 +604,7 @@ export default function GigDescriptionPage() {
                         <div className="flex items-center gap-2 bg-blue-50 p-2.5 rounded-xl">
                           <Package className="w-4 h-4 text-blue-600 flex-shrink-0" />
                           <div className="text-gray-700 font-medium text-sm">
-                            {pkg.revisions} Revision{pkg.revisions !== 1 ? "s" : ""}
+                            {pkg.revisions} Revision{pkg.revisions !== "1" ? "s" : ""}
                           </div>
                         </div>
                       </div>
@@ -623,7 +627,10 @@ export default function GigDescriptionPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <button className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow">
+                        <button
+                          onClick={() => navigate(`/gig/${gig.id}/${pkg.name}/project-brief`, { state: { gig, pkg } })}
+                          className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow"
+                        >
                           Continue
                           <ChevronRight className="w-5 h-5" />
                         </button>

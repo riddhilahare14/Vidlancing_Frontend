@@ -57,7 +57,9 @@ const Settings = lazy(() => import('./Components/Settings/settings'));
 const JobDescriptionPage = lazy(() => import('./Components/JobDescription/Page'));
 const GigMainPage = lazy(() => import('./Components/GigSection/Page'));
 const PreviewGig = lazy(() => import('./Components/GigsDashboard/PreviewGig'));
-const VideoEditingGig = lazy(() => import('./Components/GigSection/GigDescriptionPage')) 
+const VideoEditingGig = lazy(() => import('./Components/GigSection/GigDescriptionPage'));
+const ProjectBriefForm = lazy(() => import('./Components/GigSection/Project-brief-form'));
+const GigPaymentPage = lazy(() => import('./Components/GigSection/Payment-page'))
 const Shortlist = lazy(() => import('./Components/ClientDashboard/ShortList'));
 const JobApplicants = lazy(() => import('./Components/ClientDashboard/JobApplicants'));
 
@@ -164,6 +166,8 @@ function NavbarPage() {
             <Route path="/gig" element={<GigMainPage />} />
             <Route path="/gig/preview" element={<PreviewGig />} />
             <Route path="/gig/:gigId" element={<VideoEditingGig />} />
+            <Route path="/gig/:gigId/:pkgName/project-brief" element={<ProjectBriefForm />} />
+            <Route path="/gig/:gigId/:pkgName/project-brief/payment" element={<GigPaymentPage />}/>
             <Route path='/jobs' element={<ClientJobs/>}></Route>
             <Route path="/jobs/:jobId/shortlist" element={<Shortlist />} />
             <Route path="/freelancerProfile/:freelancerId" element={<ProfilePage />} />
